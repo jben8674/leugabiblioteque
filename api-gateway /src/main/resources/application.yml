@@ -1,0 +1,73 @@
+
+server:
+  port: 8067
+
+eureka:
+  instance:
+    ip-address: localhost
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8763/eureka/
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: etudiant-service
+          uri: lb://etudiant-service
+          predicates:
+            - Path=/etudiants/**, /leugabiblioteque/etudiants/**
+          filters:
+            - ContextPathRewritePath=/leugabiblioteque/etudiants/(?<path>.*), /$\{path}
+            - RewritePath=/etudiants/(?<path>.*), /$\{path}
+
+        - id: livre-service
+          uri: lb://livre-service
+          predicates:
+            - Path=/livres/**, /leugabiblioteque/livres/**
+          filters:
+            - ContextPathRewritePath=/leugabiblioteque/livres/(?<path>.*), /$\{path}
+            - RewritePath=/livres/(?<path>.*), /$\{path}
+
+        - id: emprunt-service
+          uri: lb://emprunt-service
+          predicates:
+            - Path=/api/emprunts/**, /leugabiblioteque/api/emprunts/**
+          filters:
+            - ContextPathRewritePath=/leugabiblioteque/api/emprunts/(?<path>.*), /$\{path}
+            - RewritePath=/api/emprunts/(?<path>.*), /$\{path}
+
+
+        - id: openapi-proxy
+          uri: https://demos.springdoc.org
+          predicates:
+            - Path=/leugabiblioteque/v3/api-docs/**
+          filters:
+            - RewritePath=/leugabiblioteque/v3/api-docs/(?<path>.*), /leugabiblioteque/${path}/v3/api-docs
+            - RemoveRequestHeader=Cookie
+
+        - id: openapi
+          uri: http://localhost:8067
+          predicates:
+            - Path=/v3/api-docs/**
+          filters:
+            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+
+
+
+springdoc:
+  cache:
+    disabled: true
+  version: '@springdoc.version@'
+  swagger-ui:
+    use-root-path: true
+  api-docs:
+    version: openapi_3_1
+
+
+

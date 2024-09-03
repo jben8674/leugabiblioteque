@@ -1,0 +1,11 @@
+
+server:
+  port: 8763
+spring:
+  profiles:
+    active: @spring.profiles.active@
+  application:
+    name: eureka-dev
+  config:
+    import: "optional:configserver:${CONFIG_SERVER:config-server:8088}"
+

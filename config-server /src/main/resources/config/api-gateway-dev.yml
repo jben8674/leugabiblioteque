@@ -1,0 +1,80 @@
+
+server:
+  port: 8067
+
+eureka:
+  instance:
+    ip-address: localhost
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8763/eureka/
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: client-service
+          uri: lb://client-service
+          predicates:
+            - Path=/client/**, /projet-microservices/client/**
+          filters:
+            - ContextPathRewritePath=/projet-microservices/client/(?<path>.*), /$\{path}
+            - RewritePath=/client/(?<path>.*), /$\{path}
+
+        - id: commande-service
+          uri: lb://commande-service
+          predicates:
+            - Path=/commande/**, /projet-microservices/commande/**
+          filters:
+            - ContextPathRewritePath=/projet-microservices/commande/(?<path>.*), /$\{path}
+            - RewritePath=/commande/(?<path>.*), /$\{path}
+
+        - id: gestion-des-paiements
+          uri: lb://gestion-des-paiements
+          predicates:
+            - Path=/api/paiements/**, /projet-microservices/api/paiements/**
+          filters:
+            - ContextPathRewritePath=/projet-microservices/api/paiements/(?<path>.*), /$\{path}
+            - RewritePath=/api/paiements/(?<path>.*), /$\{path}
+
+        - id: gestion-des-produits
+          uri: lb://gestion-des-produits
+          predicates:
+            - Path=/api/produits/**, /projet-microservices/api/produits/**
+          filters:
+            - ContextPathRewritePath=/projet-microservices/api/produits/(?<path>.*), /$\{path}
+            - RewritePath=/api/produits/(?<path>.*), /$\{path}
+
+        - id: openapi-proxy
+          uri: https://demos.springdoc.org
+          predicates:
+            - Path=/projet-microservices/v3/api-docs/**
+          filters:
+            - RewritePath=/projet-microservices/v3/api-docs/(?<path>.*), /projet-microservices/${path}/v3/api-docs
+            - RemoveRequestHeader=Cookie
+
+        - id: openapi
+          uri: http://localhost:8060
+          predicates:
+            - Path=/v3/api-docs/**
+          filters:
+            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+
+
+
+springdoc:
+  cache:
+    disabled: true
+  version: '@springdoc.version@'
+  swagger-ui:
+    use-root-path: true
+  api-docs:
+    version: openapi_3_1
+
+
+

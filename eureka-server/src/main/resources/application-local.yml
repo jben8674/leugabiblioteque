@@ -1,0 +1,17 @@
+server:
+  port: 8763
+spring:
+  application:
+    name: eureka
+  config:
+    import: "optional:configserver:${CONFIG_SERVER:http://localhost:8088}"
+
+
+
+eureka:
+  client:
+    enabled: true
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8763/eureka}
+  instance:
+    preferIpAddress: true

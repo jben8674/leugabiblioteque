@@ -1,0 +1,35 @@
+
+server:
+  port: 5007
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: livre-service
+  datasource:
+    url: jdbc:postgresql://localhost:5536/livredb?createDatabaseIfNotExist=true
+    username: bengono
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  instance:
+    ip-address: localhost
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8763/eureka/
+
+
+springdoc:
+  version: '@springdoc.version@'
+  api-docs:
+    version: openapi_3_1
+  cache:
+    disabled: true
