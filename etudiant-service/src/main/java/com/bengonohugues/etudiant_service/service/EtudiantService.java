@@ -28,7 +28,6 @@ public class EtudiantService {
          if(existingEtudiant.isPresent()){
              throw new EtudiantAlreadyExistExeption("etudiant deja existant avec ce code");
          }
-
         Etudiant etudiant = new Etudiant();
         etudiant.setNom(etudiantDTO.getNom());
         etudiant.setPrenom(etudiantDTO.getPrenom());
